@@ -9,7 +9,7 @@ session_id=$(echo "$raw" | jq -r '.session_id // ""')
 payload=$(jq -n \
     --arg src "claude_code" \
     --arg et "session_end" \
-    --arg ts "$(python3 -c 'import time; print(int(time.time()*1000))')" \
+    --arg ts "$(/usr/bin/perl -MTime::HiRes=time -e 'printf "%d", time*1000')" \
     --arg sid "$session_id" \
     --arg cwd "$PWD" \
     --argjson raw "$raw" \

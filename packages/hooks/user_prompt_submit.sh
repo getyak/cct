@@ -9,7 +9,7 @@ prompt=$(echo "$raw" | jq -r '.prompt // ""')
 payload=$(jq -n \
     --arg src "claude_code" \
     --arg et "user_prompt" \
-    --arg ts "$(python3 -c 'import time; print(int(time.time()*1000))')" \
+    --arg ts "$(/usr/bin/perl -MTime::HiRes=time -e 'printf "%d", time*1000')" \
     --arg cwd "$PWD" \
     --arg project "$(basename "$PWD")" \
     --arg content "$prompt" \
