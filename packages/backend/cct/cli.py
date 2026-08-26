@@ -1,4 +1,7 @@
-import argparse, uvicorn
+import argparse
+
+import uvicorn
+
 
 def main():
     p = argparse.ArgumentParser(description="Claude Conversation Tracker")

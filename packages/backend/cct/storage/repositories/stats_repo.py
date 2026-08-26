@@ -1,14 +1,19 @@
 from __future__ import annotations
+
 import aiosqlite
+
 from cct.models.api import StatsIntentDTO, StatsTokenDTO
+
 
 async def intent_distribution(db: aiosqlite.Connection,
                                from_ts=None, to_ts=None) -> list[StatsIntentDTO]:
     where, params = ["1=1"], []
     if from_ts:
-        where.append("m.created_at >= ?"); params.append(from_ts)
+        where.append("m.created_at >= ?")
+        params.append(from_ts)
     if to_ts:
-        where.append("m.created_at <= ?"); params.append(to_ts)
+        where.append("m.created_at <= ?")
+        params.append(to_ts)
     sql = f"""
         SELECT i.primary_intent AS intent, COUNT(*) AS cnt
         FROM intents i JOIN messages m ON m.id=i.message_id
@@ -28,9 +33,11 @@ async def token_usage(db: aiosqlite.Connection,
     fmt = "%Y-%m-%d" if bucket == "day" else "%Y-%m-%dT%H"
     where, params = ["role='assistant'"], []
     if from_ts:
-        where.append("created_at >= ?"); params.append(from_ts)
+        where.append("created_at >= ?")
+        params.append(from_ts)
     if to_ts:
-        where.append("created_at <= ?"); params.append(to_ts)
+        where.append("created_at <= ?")
+        params.append(to_ts)
     sql = f"""
         SELECT strftime('{fmt}', created_at/1000, 'unixepoch') AS bucket,
                SUM(input_tokens) AS input_tokens,

@@ -1,6 +1,9 @@
 from __future__ import annotations
-import aiosqlite
+
 from pathlib import Path
+
+import aiosqlite
+
 from cct.config import db_path
 
 _SCHEMA = Path(__file__).parent / "schema.sql"

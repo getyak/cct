@@ -1,12 +1,16 @@
 from __future__ import annotations
+
 import json
 import time
+
 from ulid import ULID
-from cct.storage.db import get_db
-from cct.storage import jsonl_writer
-from cct.storage.repositories import session_repo, message_repo
+
 from cct.intent.rules import classify
 from cct.realtime.broadcaster import broadcast
+from cct.storage import jsonl_writer
+from cct.storage.db import get_db
+from cct.storage.repositories import message_repo, session_repo
+
 
 def _new_id() -> str:
     return str(ULID())

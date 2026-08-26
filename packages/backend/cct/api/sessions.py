@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from fastapi import APIRouter, Query
+
 from cct.storage.db import get_db
-from cct.storage.repositories import session_repo, message_repo
+from cct.storage.repositories import message_repo, session_repo
 
 router = APIRouter(prefix="/api/v1")
 

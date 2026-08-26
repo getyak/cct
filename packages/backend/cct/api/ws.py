@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
 from cct.realtime.broadcaster import subscribe, unsubscribe
 
 router = APIRouter()

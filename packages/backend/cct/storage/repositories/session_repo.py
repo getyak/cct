@@ -1,7 +1,11 @@
 from __future__ import annotations
+
 import json
+
 import aiosqlite
+
 from cct.models.api import SessionDTO
+
 
 async def upsert(db: aiosqlite.Connection, s: dict) -> None:
     # msg_delta=1 on first insert; ON CONFLICT accumulates counts correctly

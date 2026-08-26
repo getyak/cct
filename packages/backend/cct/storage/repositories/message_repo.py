@@ -1,7 +1,11 @@
 from __future__ import annotations
+
 import json
+
 import aiosqlite
+
 from cct.models.api import MessageDTO, SearchResult
+
 
 async def insert(db: aiosqlite.Connection, m: dict) -> None:
     await db.execute("""

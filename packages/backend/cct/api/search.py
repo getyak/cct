@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from fastapi import APIRouter, Query
+
 from cct.storage.db import get_db
 from cct.storage.repositories.message_repo import search
 

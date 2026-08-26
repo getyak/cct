@@ -1,9 +1,12 @@
 from __future__ import annotations
+
 import time
+
 from fastapi import APIRouter
 from ulid import ULID
-from cct.models.domain import IngestEvent
+
 from cct.models.api import IngestResponse
+from cct.models.domain import IngestEvent
 from cct.pipeline.queue import enqueue
 
 router = APIRouter(prefix="/api/v1")

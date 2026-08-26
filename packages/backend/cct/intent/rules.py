@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import re
+
 from cct.models.domain import IntentResult
 
 _RULES: list[tuple[str, list[str], float]] = [
@@ -16,7 +18,7 @@ _RULES: list[tuple[str, list[str], float]] = [
     ("coding",        [r"实现|编写|写.{0,6}(函数|类|方法|组件|功能|接口|模块)|创建.{0,6}(函数|类|接口)|构建|重构|开发.{0,6}(功能|模块)|代码怎么写|算法"], 0.85),
     ("architecture",  [r"架构|设计.{0,6}(系统|方案|模式)|可扩展|权衡|结构|系统设计|数据库设计|高并发|分布式"], 0.80),
     ("documentation", [r"文档|注释|说明|readme|wiki|怎么写文档|接口文档|使用说明"], 0.80),
-    ("review",        [r"代码审查|审阅|检查.{0,6}代码|代码质量|优化建议"], 0.80),
+    ("review",        [r"代码审查|审查.{0,6}代码|审阅|检查.{0,6}代码|代码质量|优化建议"], 0.80),
     ("planning",      [r"计划|规划|任务|拆分|里程碑|路线图|需求|排期"], 0.78),
     ("question",      [r"如何|怎么|什么|为什么|哪里|哪个|是否|能否|可以吗|？$"]),
 ]
