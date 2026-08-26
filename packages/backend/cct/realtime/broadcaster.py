@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import asyncio
 import json
 
@@ -20,4 +21,4 @@ async def broadcast(event: dict) -> None:
             q.put_nowait(msg)
         except asyncio.QueueFull:
             dead.add(q)
-    _subscribers -= dead
+    _subscribers.difference_update(dead)

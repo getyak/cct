@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 import json
 from datetime import datetime, timezone
+
 from cct.config import raw_dir
+
 
 async def append(event: dict) -> str:
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")

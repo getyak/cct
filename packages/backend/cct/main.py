@@ -1,12 +1,16 @@
 from __future__ import annotations
+
 import asyncio
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from cct.storage.db import init_db
-from cct.pipeline.queue import worker
+
+from cct.api import ingest, search, sessions, stats, ws
 from cct.pipeline.persister import handle
-from cct.api import ingest, sessions, search, stats, ws
+from cct.pipeline.queue import worker
+from cct.storage.db import init_db
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -14,6 +18,8 @@ async def lifespan(app: FastAPI):
     task = asyncio.create_task(worker(handle))
     yield
     task.cancel()
+    with suppress(asyncio.CancelledError):
+        await task
 
 app = FastAPI(title="Claude Conversation Tracker", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"],

@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import asyncio
-from typing import Callable, Awaitable
+from typing import Awaitable, Callable
 
 _queue: asyncio.Queue = asyncio.Queue(maxsize=2000)
 

@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![uv](https://img.shields.io/badge/uv-package%20manager-purple)](https://github.com/astral-sh/uv)
 
 [快速开始](#快速开始) · [功能特性](#功能特性) · [架构](#架构) · [API 文档](#api-文档) · [贡献](#贡献)
@@ -41,7 +41,7 @@ CCT 通过 Claude Code 的 Hook 机制，在你每次与 Claude 对话时自动�
 ### 前置依赖
 
 - Python 3.11+
-- Node.js 18+
+- Node.js 20.19+ 或 22.12+
 - [uv](https://github.com/astral-sh/uv)（Python 包管理器）
 - [Claude Code](https://claude.ai/code) CLI
 
