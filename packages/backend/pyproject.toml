@@ -9,7 +9,7 @@ description = "Claude Conversation Tracker"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.141.1,<0.142",
-    "uvicorn[standard]>=0.52.4,<0.53",
+    "uvicorn[standard]>=0.54.0,<0.55",
     "pydantic>=2.13.4,<3",
     "aiosqlite>=0.22.1,<0.23",
     "python-ulid>=4.0.1,<5",
