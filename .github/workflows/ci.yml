@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Audit dependencies
-        run: npm audit --audit-level=high
+        run: npm run test:security && npm run audit
       - name: Build
         run: npm run build
 
