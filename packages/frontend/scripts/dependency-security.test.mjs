@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
-import { cpSync, mkdtempSync, readFileSync, rmSync, appendFileSync } from 'node:fs'
+import { cpSync, mkdtempSync, readFileSync, rmSync, appendFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -77,14 +77,115 @@ test('deep and cyclic ASTs terminate in a bounded child process', () => {
   assert.equal(result.status, 0, result.stderr || result.error?.message)
 })
 
+const dependencyLock = JSON.parse(readFileSync(resolve(root, 'package-lock.json')))
+const advisory = {
+  source: 1240992, name: 'braces', dependency: 'braces', severity: 'high', range: '<=3.0.3',
+  title: 'braces stack exhaustion', url: 'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm',
+}
+const entry = (name, via) => ({ name, severity: 'high', isDirect: false, range: '*', effects: [], nodes: [`node_modules/${name}`], fixAvailable: false, via })
+const reportFor = (vulnerabilities) => {
+  const counts = { info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: Object.keys(vulnerabilities).length }
+  for (const value of Object.values(vulnerabilities)) counts[value.severity] += 1
+  return {
+    auditReportVersion: 2, vulnerabilities,
+    metadata: { vulnerabilities: counts, dependencies: { prod: Object.keys(dependencyLock.packages).filter(Boolean).length, dev: 0, optional: 0, peer: 0, peerOptional: 0, total: Object.keys(dependencyLock.packages).filter(Boolean).length } },
+  }
+}
+const fixture = () => reportFor({ braces: entry('braces', [{ ...advisory }]), micromatch: entry('micromatch', ['braces']), tailwindcss: entry('tailwindcss', ['micromatch']) })
+
 test('audit policy accepts only the exact mitigated advisory and its dependency chain', () => {
-  const advisory = { name: 'braces', url: 'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm' }
-  const vulnerabilities = { braces: { via: [advisory] }, micromatch: { via: ['braces'] }, tailwindcss: { via: ['micromatch'] } }
-  assert.deepEqual(remainingAdvisories({ vulnerabilities }), [])
-  vulnerabilities.braces.via.push({ name: 'braces', url: 'https://github.com/advisories/unknown' })
-  assert.deepEqual(remainingAdvisories({ vulnerabilities }).sort(), ['braces', 'micromatch', 'tailwindcss'])
-  assert.throws(() => remainingAdvisories({ error: 'network failure' }), /unavailable/)
-  assert.deepEqual(remainingAdvisories({ vulnerabilities: { a: { via: ['b'] }, b: { via: ['a'] } } }).sort(), ['a', 'b'])
+  const report = fixture()
+  assert.deepEqual(remainingAdvisories(report), [])
+  report.vulnerabilities.braces.via.push({ ...advisory, url: 'https://github.com/advisories/unknown' })
+  assert.deepEqual(remainingAdvisories(report).sort(), ['braces', 'micromatch', 'tailwindcss'])
+  assert.deepEqual(remainingAdvisories(reportFor({ micromatch: entry('micromatch', ['tailwindcss']), tailwindcss: entry('tailwindcss', ['micromatch']) })).sort(), ['micromatch', 'tailwindcss'])
+})
+
+test('empty, missing and malformed audit reports fail closed', () => {
+  for (const report of [null, {}, { vulnerabilities: {} }, { auditReportVersion: 2, vulnerabilities: {}, metadata: {} }, { error: 'network failure' }]) {
+    assert.throws(() => remainingAdvisories(report), /Incomplete or inconsistent/)
+  }
+  for (const mutate of [
+    (r) => { delete r.metadata.vulnerabilities.high },
+    (r) => { delete r.metadata.dependencies.total },
+    (r) => { r.auditReportVersion = 1 },
+    (r) => { r.vulnerabilities.braces.via = [] },
+    (r) => { r.vulnerabilities.braces.nodes = [] },
+    (r) => { r.vulnerabilities.braces.via = ['missing-package'] },
+    (r) => { r.vulnerabilities.braces.severity = 'unknown' },
+  ]) {
+    const report = fixture(); mutate(report)
+    assert.throws(() => remainingAdvisories(report), /Incomplete or inconsistent/)
+  }
+})
+
+test('audit severity and dependency counts must match the full report and frozen lock', () => {
+  for (const mutate of [
+    (r) => { r.metadata.vulnerabilities.total = 0 },
+    (r) => { r.metadata.vulnerabilities.high = 0 },
+    (r) => { r.metadata.vulnerabilities.high = '3' },
+    (r) => { r.metadata.vulnerabilities.low = -1 },
+    (r) => { r.metadata.dependencies.total += 1 },
+    (r) => { r.metadata.dependencies.prod = NaN },
+    (r) => { r.metadata.dependencies.prod = r.metadata.dependencies.total + 1 },
+    (r) => { r.metadata.dependencies.prod = 0 },
+  ]) {
+    const report = fixture(); mutate(report)
+    assert.throws(() => remainingAdvisories(report), /Incomplete or inconsistent/)
+  }
+})
+
+test('unknown nested braces report nodes and additional locked copies cannot use the mitigation', () => {
+  for (const nodes of [
+    ['node_modules/braces', 'node_modules/micromatch/node_modules/braces'],
+    ['node_modules/micromatch/node_modules/braces'],
+    ['../node_modules/braces'],
+  ]) {
+    const report = fixture(); report.vulnerabilities.braces.nodes = nodes
+    assert.throws(() => remainingAdvisories(report), /Incomplete or inconsistent|unverified braces/)
+  }
+  for (const [path, value] of [
+    ['node_modules/micromatch/node_modules/braces', { version: '3.0.3' }],
+    ['node_modules/braces-alias', { name: 'braces', version: '3.0.3' }],
+  ]) {
+    const lock = structuredClone(dependencyLock); lock.packages[path] = value
+    assert.throws(() => remainingAdvisories(fixture(), lock), /Unverified braces copy/)
+  }
+})
+
+test('audit retains raw responses on rejection and preserves the high severity threshold', () => {
+  const directory = mkdtempSync(resolve(tmpdir(), 'cct-audit-evidence-'))
+  try {
+    cpSync(resolve(root, 'scripts'), resolve(directory, 'scripts'), { recursive: true })
+    cpSync(resolve(root, 'patches'), resolve(directory, 'patches'), { recursive: true })
+    cpSync(resolve(root, 'package-lock.json'), resolve(directory, 'package-lock.json'))
+    mkdirSync(resolve(directory, 'node_modules'), { recursive: true })
+    cpSync(bracesDir, resolve(directory, 'node_modules/braces'), { recursive: true })
+    writeFileSync(resolve(directory, 'package.json'), '{"type":"module"}')
+    const scanner = resolve(directory, 'scanner.cjs')
+    const unknown = (severity) => reportFor({ postcss: {
+      ...entry('postcss', [{ ...advisory, name: 'postcss', dependency: 'postcss', severity, url: 'https://github.com/advisories/unexpected' }]), severity,
+    } })
+    for (const [raw, exit, rejects] of [
+      ['{\n  "vulnerabilities": {}\n}\n', 1, /Incomplete or inconsistent npm audit report/],
+      [JSON.stringify(unknown('high')), 1, /Unmitigated dependency advisories: postcss/],
+      [JSON.stringify(unknown('moderate')), 0, null],
+    ]) {
+      writeFileSync(scanner, `process.stdout.write(${JSON.stringify(raw)}); process.stderr.write('scanner diagnostic'); process.exitCode = ${exit}`)
+      const result = spawnSync(process.execPath, [resolve(directory, 'scripts/audit.mjs')], {
+        env: { ...process.env, npm_execpath: scanner }, encoding: 'utf8', timeout: 5000,
+      })
+      if (rejects) {
+        assert.notEqual(result.status, 0)
+        assert.match(result.stderr, rejects)
+      } else assert.equal(result.status, 0, result.stderr)
+      assert.equal(readFileSync(resolve(directory, '.audit/npm-audit.raw.json'), 'utf8'), raw)
+      assert.equal(readFileSync(resolve(directory, '.audit/npm-audit.stderr.log'), 'utf8'), 'scanner diagnostic')
+      assert.equal(JSON.parse(readFileSync(resolve(directory, '.audit/execution.json'))).status, exit)
+    }
+  } finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
 })
 
 test('Tailwind 3, typography, arbitrary variants and apply remain compatible with the selector override', async () => {

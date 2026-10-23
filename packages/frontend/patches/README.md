@@ -11,17 +11,23 @@ not a claim that upstream published a fixed release.
 
 `npm ci` verifies the registry tarball integrity recorded in the lockfile. Its
 postinstall step applies the patch only to the exact original source hashes in
-`braces-source.json`, then verifies the patched source and micromatch's actual
-resolution. Git must be available during installation. Modified or partial
+`braces-source.json`, then verifies the patched source, the sole locked braces
+copy, and every locked direct consumer's actual resolution. Git must be available during installation. Modified or partial
 installations fail closed. Repeated installation verification is idempotent.
 
 `npm run test:security` tests real installed code, ordinary glob behavior,
 depth boundaries, cyclic ASTs, and the Tailwind 3 selector integration.
 `npm run audit` verifies the source again and accepts only this exact advisory
-and dependency graph entries caused exclusively by it. Any new advisory,
-modified source, incomplete report, or audit service failure rejects the check.
+and dependency graph entries caused exclusively by it. Any new high/critical advisory,
+modified source, incomplete report, inconsistent counts, unknown braces node,
+additional locked braces copy, or audit service failure rejects the check.
+The original high-severity threshold remains: other high/critical advisories
+reject the gate, and any lower-severity entries remain visible in the raw report.
 The raw scanner still reports the original version; inspect it with
-`npm run audit:raw`. Remove this patch and policy when a verified upstream fix
+`npm run audit:raw`. Every audit saves the complete scanner response and execution
+status under ignored `.audit/`, before validating source or report fields. CI
+always attempts the audit and uploads that directory, including on failure.
+Remove this patch and policy when a verified upstream fix
 becomes available.
 
 `postcss-selector-parser` is overridden to 7.1.7 to fix both parser advisories;
