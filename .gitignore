@@ -12,6 +12,7 @@ dist/
 # Node
 node_modules/
 packages/frontend/dist/
+packages/frontend/.audit/
 *.tsbuildinfo
 
 # Runtime data

@@ -1,0 +1,42 @@
+{
+  "package": "braces",
+  "version": "3.0.3",
+  "advisory": "GHSA-vfj7-8cjw-p6xm",
+  "upstream": "https://github.com/micromatch/braces/issues/70",
+  "patch_sha256": "7efc1d8e8e8fe452332879fb9da72ae6ab0bc7740578b86e069622a4bba142a2",
+  "files": {
+    "lib/compile.js": {
+      "original": "dc98f22eee3d511785d92a00758d5f0d48efed5f5813bdecc2de430c529b5c9f",
+      "patched": "12639e1dc29a068e11e9e4b026e04dd8f105568a5669236552aaa69c7a48a158"
+    },
+    "lib/constants.js": {
+      "original": "c18ac5adb57308f1ce42a28552da3a31f5d83709743ebd9a636336813a744d4b",
+      "patched": "22f315834a9ac27c382cc05cf12997146fe488c941dce64b29f954cbfd1317d1"
+    },
+    "lib/expand.js": {
+      "original": "41ccc196ebfa7b7781a634e721eb744e4e7bcb54cba427a7e3d6806a1b9e58f7",
+      "patched": "9469fdd97a047497441e31bf83b82ca09f366c4168049449553d546c47ae2302"
+    },
+    "lib/parse.js": {
+      "original": "e572166565f15fa6ad9865ae49d678218e32aabfd1b3720f6d0d43d39800d310",
+      "patched": "d616c66f76a926d1a155c0d0ed70ea64906d25cbc3c82db0fd6c62d53f2bd0a1"
+    },
+    "lib/stringify.js": {
+      "original": "379f22d77bfa1478341ccd49c5e4267464aabcbba03558bab332aac23fc6f23a",
+      "patched": "42fe27b1f36e0645c422e741e63d654d372fa2bc71a9f172a4e938f91e7f7e10"
+    },
+    "index.js": {
+      "original": "332ea07c7b006361aad12aa994ca75dc1db8e8382b884909e2f38f10b85c88a4",
+      "patched": "332ea07c7b006361aad12aa994ca75dc1db8e8382b884909e2f38f10b85c88a4"
+    },
+    "lib/utils.js": {
+      "original": "b5a7596aa67730412b3c029ef09e84e6b67b8e445cffd35d1d295549c89066c7",
+      "patched": "b5a7596aa67730412b3c029ef09e84e6b67b8e445cffd35d1d295549c89066c7"
+    },
+    "package.json": {
+      "original": "56f08b888a4f30dc7cf8a7dbb36ffe92b737912ba36abe9d069d32167c957ac7",
+      "patched": "56f08b888a4f30dc7cf8a7dbb36ffe92b737912ba36abe9d069d32167c957ac7"
+    }
+  },
+  "npm_integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA=="
+}
