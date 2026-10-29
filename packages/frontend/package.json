@@ -10,8 +10,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "audit": "npm audit --audit-level=high",
-    "check": "npm run audit && npm run build"
+    "audit": "node scripts/audit.mjs",
+    "check": "npm run test:security && npm run audit && npm run build",
+    "postinstall": "node scripts/braces-patch.mjs apply",
+    "test:security": "node --test scripts/dependency-security.test.mjs",
+    "audit:raw": "npm audit --audit-level=high"
   },
   "dependencies": {
     "lucide-react": "^0.400.0",
@@ -27,11 +30,15 @@
     "@tailwindcss/typography": "^0.5.20",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "6.1.0",
-    "autoprefixer": "^10.4.19",
-    "postcss": "8.5.26",
+    "@vitejs/plugin-react": "6.1.2",
+    "autoprefixer": "^10.6.1",
+    "postcss": "8.5.29",
     "tailwindcss": "^3.4.6",
     "typescript": "^5.5.3",
-    "vite": "8.2.2"
+    "vite": "8.3.5"
+  },
+  "overrides": {
+    "postcss-selector-parser": "7.1.7",
+    "source-map-js": "^1.2.2"
   }
 }
