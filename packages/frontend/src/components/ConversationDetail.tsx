@@ -46,7 +46,7 @@ function MessageBubble({ m }: { m: Message }) {
             {m.intent.keywords.map((kw) => (
               <span
                 key={kw}
-                className="text-xs bg-gray-700/60 text-gray-400 px-1.5 py-0.5 rounded"
+                className="text-xs bg-gray-700/60 text-gray-400 px-1.5 py-0.5 rounded-sm"
               >
                 {kw}
               </span>

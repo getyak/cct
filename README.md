@@ -105,7 +105,7 @@ cct/
 │   │       ├── pipeline/     # 异步处理队列
 │   │       ├── storage/      # SQLite + JSONL 归档
 │   │       └── realtime/     # WebSocket 广播
-│   ├── frontend/             # React 18 · Vite · Tailwind CSS
+│   ├── frontend/             # React 19 · Vite · Tailwind CSS 4
 │   │   └── src/
 │   │       ├── routes/       # Dashboard / History / Detail
 │   │       ├── components/   # 图表、列表、搜索栏等组件

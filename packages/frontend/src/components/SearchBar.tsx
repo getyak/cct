@@ -22,7 +22,7 @@ export function SearchBar({ onSearch, onClear }: Props) {
     <div className="flex gap-2">
       <input
         className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm
-                   focus:outline-none focus:border-purple-500 placeholder-gray-500"
+                   focus:outline-hidden focus:border-purple-500 placeholder-gray-500"
         placeholder="搜索对话内容… (回车确认)"
         value={val}
         onChange={(e) => setVal(e.target.value)}
