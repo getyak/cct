@@ -30,6 +30,10 @@ dev = [
 [project.scripts]
 cct = "cct.cli:main"
 
+[tool.uv]
+# Security floors for pip-audit's transitive CacheControl dependencies.
+constraint-dependencies = ["filelock>=4.2.1,<5", "msgpack>=1.2.3,<2"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["cct"]
 
