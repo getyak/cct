@@ -17,7 +17,7 @@
     "audit:raw": "npm audit --audit-level=high"
   },
   "dependencies": {
-    "lucide-react": "^0.400.0",
+    "lucide-react": "^1.61.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-markdown": "^10.1.0",
