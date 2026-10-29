@@ -33,6 +33,7 @@ export function IntentChart({ data }: Props) {
           data={data}
           dataKey="count"
           nameKey="intent"
+          legendType="rect"
           cx="50%"
           cy="50%"
           outerRadius={95}
