@@ -17,11 +17,11 @@
     "audit:raw": "npm audit --audit-level=high"
   },
   "dependencies": {
-    "lucide-react": "^1.61.0",
+    "lucide-react": "^1.65.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "7.18.4",
+    "react-router-dom": "7.18.5",
     "recharts": "^2.12.7",
     "rehype-highlight": "^7.0.0",
     "remark-gfm": "^4.0.0"
@@ -32,7 +32,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "6.1.2",
-    "postcss": "8.5.31",
+    "postcss": "8.5.32",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.5.3",
     "vite": "8.3.5"
